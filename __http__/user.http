@@ -1,0 +1,64 @@
+GET http://localhost:3000/users
+
+###
+
+GET http://localhost:3000/users/8e0d77fd-a748-4bcd-89a8-8c4e0b59aea6
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "test4_kang@babo.com",
+  "firstname": "황",
+  "lastname": "시연",
+  "address": "서울 강남구"
+}
+
+###
+
+PATCH http://localhost:3000/users/82d81876-548a-4d8e-b32c-cbcc77a78bbd
+Content-Type: application/json
+
+{
+  "firstname": "시연",
+  "lastname": "황"
+}
+
+###
+
+DELETE http://localhost:3000/users/96741deb-4ec5-4133-8fd0-0c8fadf902a1
+
+###
+
+GET http://localhost:3000/products
+
+###
+
+GET http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
+
+###
+
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name": "레노버 미니 PC",
+  "description": "매운 작은 고추!",
+  "price": 100000,
+  "category": "ELECTRONICS",
+  "stock": 20
+}
+
+###
+
+PATCH http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
+
+{
+  "description": "작지만 강력한 레이블 메이커, 사무용"
+}
+
+###
+
+DELETE http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
