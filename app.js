@@ -30,7 +30,7 @@ app.post('/products', async (req, res) => {
 
 app.patch('/products/:id', async (req, res) => {
   const id = req.params.id;
-  if (await prisma.product.count({ where: { id } })) {
+  if ((await prisma.product.count({ where: { id } })) == 1) {
     const data = req.body;
     const product = await prisma.product.update({ where: { id }, data });
     res.send(product);

@@ -10,25 +10,26 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "email": "test4_kang@babo.com",
-  "firstname": "황",
-  "lastname": "시연",
-  "address": "서울 강남구"
+  "email": "test5_kang@babo.com",
+  "firstname": "김",
+  "lastname": "경옥",
+  "address": "경기도 하남시"
 }
 
 ###
 
-PATCH http://localhost:3000/users/82d81876-548a-4d8e-b32c-cbcc77a78bbd
+PATCH http://localhost:3000/users/82091134-cdc8-4efb-b9cf-0fc384b9d8f9
 Content-Type: application/json
 
 {
-  "firstname": "시연",
-  "lastname": "황"
+  "firstname": "경옥",
+  "lastname": "김",
+  "address": "경기도 하남시"
 }
 
 ###
 
-DELETE http://localhost:3000/users/96741deb-4ec5-4133-8fd0-0c8fadf902a1
+DELETE http://localhost:3000/users/82091134-cdc8-4efb-b9cf-0fc384b9d8f9
 
 ###
 
@@ -36,8 +37,7 @@ GET http://localhost:3000/products
 
 ###
 
-GET http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
-
+GET http://localhost:3000/products/28cc77ca-3768-401e-991d-8c5f39645c1b
 ###
 
 POST http://localhost:3000/products
@@ -53,12 +53,14 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
+PATCH http://localhost:3000/products/2c7e5f3a-ed2d-467b-a2d7-2c1011275260
+Content-Type: application/json
 
 {
-  "description": "작지만 강력한 레이블 메이커, 사무용"
+  "name": "Brother P700",
+  "description": "사무용, 작지만 다재다능한 레이블 메이커"
 }
 
 ###
 
-DELETE http://localhost:3000/products/67d6d84b-3a3d-4c90-bf66-0991ed8ba1ea
+DELETE http://localhost:3000/products/e97edcd7-9bcb-414a-bcc3-76bc6329c55b
