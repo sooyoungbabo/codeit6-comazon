@@ -1,3 +1,4 @@
 node_modules/
 .prettierrc
 .env
+__http__/

@@ -9,7 +9,11 @@ const prisma = new PrismaClient();
 //----------------------------- rout hander: products
 app.get('/products', async (req, res) => {
   const products = await prisma.product.findMany();
-  res.send(products);
+  if (products) {
+    res.send(products);
+  } else {
+    res.status(404).send('No products found.');
+  }
 });
 
 app.get('/products/:id', async (req, res) => {
@@ -41,7 +45,7 @@ app.patch('/products/:id', async (req, res) => {
 
 app.delete('/products/:id', async (req, res) => {
   const id = req.params.id;
-  if (await prisma.product.count({ where: { id } })) {
+  if ((await prisma.product.count({ where: { id } })) == 1) {
     const product = await prisma.product.delete({ where: { id } });
     res.send(product);
   } else {
@@ -52,7 +56,11 @@ app.delete('/products/:id', async (req, res) => {
 //----------------------------- rout hander: users
 app.get('/users', async (req, res) => {
   const users = await prisma.user.findMany();
-  res.send(users);
+  if (users) {
+    res.send(users);
+  } else {
+    res.status(404).send('No users found.');
+  }
 });
 
 app.get('/users/:id', async (req, res) => {
@@ -80,7 +88,7 @@ app.post('/users', async (req, res) => {
 app.patch('/users/:id', async (req, res) => {
   //const {id} = req.params;
   const id = req.params.id;
-  if (await prisma.user.count({ where: { id } })) {
+  if ((await prisma.user.count({ where: { id } })) == 1) {
     const data = req.body;
     const user = await prisma.user.update({ where: { id }, data });
     res.send(user);
@@ -92,7 +100,7 @@ app.patch('/users/:id', async (req, res) => {
 app.delete('/users/:id', async (req, res) => {
   //const {id} = req.params;
   const id = req.params.id;
-  if (await prisma.user.count({ where: { id } })) {
+  if ((await prisma.user.count({ where: { id } })) == 1) {
     const user = await prisma.user.delete({ where: { id } });
     res.send(user);
   } else {
