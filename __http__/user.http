@@ -1,8 +1,8 @@
-GET http://localhost:3000/users
+GET http://localhost:3000/users?order=newest&offset=01&limit=3
 
 ###
 
-GET http://localhost:3000/users/8e0d77fd-a748-4bcd-89a8-8c4e0b59aea6
+GET http://localhost:3000/users/947dd6c6-8d93-4199-8329-e8363920a719
 
 ###
 
@@ -10,37 +10,38 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "email": "test5_kang@babo.com",
-  "firstname": "김",
-  "lastname": "경옥",
-  "address": "경기도 하남시"
+  "email": "babo779@naver.com",
+  "firstName": "길동",
+  "lastName": "홍",
+  "address": "강원도 삼척시",
+  "userPreference": { "receiveEmail": true }
 }
 
 ###
 
-PATCH http://localhost:3000/users/82091134-cdc8-4efb-b9cf-0fc384b9d8f9
+PATCH http://localhost:3000/users/aa48504d-fa48-45fc-aacc-6fd027ce2a53
 Content-Type: application/json
 
 {
-  "firstname": "경옥",
-  "lastname": "김",
+  "firstName": "수영",
+  "lastName:": "김",
   "address": "경기도 하남시"
 }
 
 ###
 
-DELETE http://localhost:3000/users/82091134-cdc8-4efb-b9cf-0fc384b9d8f9
+DELETE http://localhost:3000/users/42e9a8d6-7df9-40e0-96fc-dd1d2c3be717
 
 ###
 
-GET http://localhost:3000/products
+GET http://localhost:3000/products?order=newest&category=ELECTRONICS&offset=1&limit=2
 
 ###
 
-GET http://localhost:3000/products/28cc77ca-3768-401e-991d-8c5f39645c1b
+GET http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
 ###
 
-POST http://localhost:3000/products
+POST http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
 Content-Type: application/json
 
 {
@@ -53,14 +54,16 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/products/2c7e5f3a-ed2d-467b-a2d7-2c1011275260
+PATCH http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
 Content-Type: application/json
 
 {
   "name": "Brother P700",
-  "description": "사무용, 작지만 다재다능한 레이블 메이커"
+  "description": "사무용, 작지만 다재다능한 레이블 메이커",
+  "price": 80000,
+  "stock": 10
 }
 
 ###
 
-DELETE http://localhost:3000/products/e97edcd7-9bcb-414a-bcc3-76bc6329c55b
+DELETE http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
