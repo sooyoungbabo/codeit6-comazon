@@ -233,27 +233,31 @@ app.delete(
 );
 
 //----------------------------- rout hander: orders
-app.get('/orders', async (req, res) => {
-  const { offset = 0, limit = 0, order = 'newest' } = req.query;
-  let orderBy;
-  switch (order) {
-    case 'oldest':
-      orderBy = { createdAt: 'asc' };
-      break;
-    case 'newest':
-      orderBy = { createdAt: 'desc' };
-      break;
-    default:
-      orderBy = { createdAt: 'desc' };
-  }
+app.get(
+  '/orders',
+  asyncHandler(async (req, res) => {
+    const { offset = 0, limit = 0, order = 'newest' } = req.query;
+    let orderBy;
+    switch (order) {
+      case 'oldest':
+        orderBy = { createdAt: 'asc' };
+        break;
+      case 'newest':
+        orderBy = { createdAt: 'desc' };
+        break;
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
 
-  const orders = await prisma.order.findMany({
-    orderBy,
-    skip: parseInt(offset),
-    take: parseInt(limit) || 5 //undefined,
-    //include: { orderItems: true }
-  });
-});
+    const orders = await prisma.order.findMany({
+      orderBy,
+      skip: parseInt(offset),
+      take: parseInt(limit) || undefined,
+      include: { orderItems: true }
+    });
+    res.send(orders);
+  })
+);
 
 app.get(
   '/orders/:id',
