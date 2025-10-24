@@ -1,16 +1,17 @@
-GET http://localhost:3000/users?order=newest&offset=01&limit=3
+GET http://localhost:3000/users
 
 ###
-
-GET http://localhost:3000/users/947dd6c6-8d93-4199-8329-e8363920a719
+GET http://localhost:3000/users?order=newest&offset=01&limit=2
 
 ###
+GET http://localhost:3000/users/aa48504d-fa48-45fc-aacc-6fd027ce2a53
 
+###
 POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "email": "babo779@naver.com",
+  "email": "babo8112@naver.com",
   "firstName": "길동",
   "lastName": "홍",
   "address": "강원도 삼척시",
@@ -18,30 +19,35 @@ Content-Type: application/json
 }
 
 ###
-
 PATCH http://localhost:3000/users/aa48504d-fa48-45fc-aacc-6fd027ce2a53
 Content-Type: application/json
 
 {
   "firstName": "수영",
-  "lastName:": "김",
+  "lastName": "정",
   "address": "경기도 하남시"
 }
 
 ###
+DELETE http://localhost:3000/users/67dbfe9d-899f-45a4-8489-31c361656795
 
-DELETE http://localhost:3000/users/42e9a8d6-7df9-40e0-96fc-dd1d2c3be717
+
+
+
+
+
 
 ###
+GET http://localhost:3000/products
 
+###
 GET http://localhost:3000/products?order=newest&category=ELECTRONICS&offset=1&limit=2
 
 ###
+GET http://localhost:3000/products/1cc006a0-82a3-4e70-8d92-974d1ea9c3af
 
-GET http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
 ###
-
-POST http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
+POST http://localhost:3000/products
 Content-Type: application/json
 
 {
@@ -49,12 +55,11 @@ Content-Type: application/json
   "description": "매운 작은 고추!",
   "price": 100000,
   "category": "ELECTRONICS",
-  "stock": 20
+  "stock": 0
 }
 
 ###
-
-PATCH http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
+PATCH http://localhost:3000/products/0c1d678a-6a42-4adf-b3e0-a43cdec8754a
 Content-Type: application/json
 
 {
@@ -65,5 +70,4 @@ Content-Type: application/json
 }
 
 ###
-
-DELETE http://localhost:3000/products/fbfdb439-16e6-4fde-ae4d-8371cd0e90d5
+DELETE http://localhost:3000/products/0c1d678a-6a42-4adf-b3e0-a43cdec8754a

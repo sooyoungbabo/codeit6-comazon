@@ -1,7 +1,14 @@
 import express from 'express';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { assert } from 'superstruct';
-import { CreateProduct, CreateUser, PatchProduct, PatchUser } from './structs.js';
+import {
+  CreateOrder,
+  CreateProduct,
+  CreateUser,
+  PatchOrder,
+  PatchProduct,
+  PatchUser
+} from './structs.js';
 
 const app = express();
 app.use(express.json());
@@ -26,7 +33,8 @@ app.get('/users', async (req, res) => {
   const users = await prisma.user.findMany({
     orderBy,
     skip: parseInt(offset),
-    take: parseInt(limit),
+    take: parseInt(limit) || undefined,
+    include: { userPreference: true }
   });
 
   if (users.length != 0) {
@@ -38,69 +46,72 @@ app.get('/users', async (req, res) => {
 
 app.get('/users/:id', async (req, res) => {
   const id = req.params.id;
-  const user = await prisma.user.findUnique({ where: { id } });
-  console.log(user);
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: { userPreference: true }
+  });
+
   if (user) {
     res.send(user);
   } else {
-    res.status(404).send({ message: 'No such user_ID exists.' });
+    res.status(404).send('No user found by a given ID.');
   }
 });
 
 app.post('/users', async (req, res) => {
-  assert(req.body, CreateUser);
-  const { userPreference, ...userFields } = req.body;
-  const user = await prisma.user.create({
-    data: {
-      ...userFields,
-      userPreference: {
-        create: userPreference,
-      },
-    },
-    include: {
-      // Users in DB don't have userPreference property saved.
-      userPreference: true, //Thus add it before sending 'user'
-    },
-  });
-  res.status(201).send(user);
+  try {
+    assert(req.body, CreateUser);
+    const { userPreference, ...userFields } = req.body;
+    const email = req.body.email;
+    if (await prisma.user.count({ where: { email } })) {
+      return res.status(422).send('Same email exists.');
+    }
 
-  // const data = req.body;
-  // const email = data.email;
-  // if (await prisma.user.count({ where: { email } })) {
-  //   res.status(404).send('Same email exists in DB.');
-  // } else {
-  //   const user = await prisma.user.create({ data });
-  //   res.status(201).send(user);
-  // }
+    const user = await prisma.user.create({
+      data: {
+        ...userFields,
+        userPreference: { create: userPreference }
+      },
+      include: { userPreference: true }
+    });
+    res.status(201).send(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(422).send('Validation failed.');
+  }
 });
 
 app.patch('/users/:id', async (req, res) => {
-  //const {id} = req.params;
-  const id = req.params.id;
-  const data = req.body;
+  const { id } = req.params;
   try {
-    assert(data, PatchUser);
+    assert(req.body, PatchUser);
+    if ((await prisma.user.count({ where: { id } })) != 1) {
+      return res.status(404).send('No user found by a given ID.');
+    }
+    const { userPreference, ...userFields } = req.body;
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        ...userFields,
+        userPreference: { update: userPreference }
+      },
+      include: { userPreference: true }
+    });
+    res.send(user);
   } catch (e) {
     console.log(e);
-    return res.status(400).send('Wrong format');
-  }
-
-  if ((await prisma.user.count({ where: { id } })) == 1) {
-    const user = await prisma.user.update({ where: { id }, data });
-    res.send(user);
-  } else {
-    res.status(404).send('No such user_ID exists.');
+    return res.status(422).send('Validation failed.');
   }
 });
 
 app.delete('/users/:id', async (req, res) => {
-  //const {id} = req.params;
-  const id = req.params.id;
+  const { id } = req.params;
   if ((await prisma.user.count({ where: { id } })) == 1) {
     const user = await prisma.user.delete({ where: { id } });
+    console.log('User deleted.');
     res.send(user);
   } else {
-    res.status(404).send('No such user_ID exists.');
+    res.status(404).send('No user found by a given ID.');
   }
 });
 
@@ -130,11 +141,11 @@ app.get('/products', async (req, res) => {
     where,
     orderBy,
     skip: parseInt(offset),
-    take: parseInt(limit),
+    take: parseInt(limit) || undefined
   });
 
   if (products.length != 0) {
-    res.status(200).send(products);
+    res.send(products);
   } else {
     res.status(404).send('No products found.');
   }
@@ -146,7 +157,7 @@ app.get('/products/:id', async (req, res) => {
   if (product) {
     res.status(200).send(product);
   } else {
-    res.status(404).send('No such product_ID exists.');
+    res.status(404).send('No product found by a given ID.');
   }
 });
 
@@ -154,36 +165,166 @@ app.post('/products', async (req, res) => {
   const data = req.body;
   try {
     assert(data, CreateProduct);
+    const product = await prisma.product.create({ data });
+    res.send(product);
   } catch (e) {
     console.log(e);
-    return res.status(400).send('Wrong format');
+    return res.status(422).send('Validation failed.');
   }
-
-  const product = await prisma.product.create({ data });
-  res.status(201).send(product);
 });
 
 app.patch('/products/:id', async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const data = req.body;
-  assert(data, PatchProduct);
-
-  if ((await prisma.product.count({ where: { id } })) == 1) {
+  try {
+    assert(data, PatchProduct);
+    if ((await prisma.product.count({ where: { id } })) != 1) {
+      return res.status(404).send('No product found by a given ID.');
+    }
     const product = await prisma.product.update({ where: { id }, data });
-    res.status(201).send(product);
-  } else {
-    res.status(404).send('No such product_ID exists.');
+    res.send(product);
+  } catch (e) {
+    console.log(e);
+    return res.status(422).send('Validation failed.');
   }
 });
 
 app.delete('/products/:id', async (req, res) => {
   const id = req.params.id;
-  if ((await prisma.product.count({ where: { id } })) == 1) {
-    const product = await prisma.product.delete({ where: { id } });
-    res.send(product);
-  } else {
-    res.status(404).send('No such product_ID exists.');
+  if ((await prisma.product.count({ where: { id } })) != 1) {
+    return res.status(404).send('No product found by a given ID.');
   }
+  const product = await prisma.product.delete({ where: { id } });
+  console.log('Product deleted.');
+  res.send(product);
+});
+
+//----------------------------- rout hander: orders
+app.get('/orders', async (req, res) => {
+  const { offset = 0, limit = 0, order = 'newest' } = req.query;
+  let orderBy;
+  switch (order) {
+    case 'oldest':
+      orderBy = { createdAt: 'asc' };
+      break;
+    case 'newest':
+      orderBy = { createdAt: 'desc' };
+      break;
+    default:
+      orderBy = { createdAt: 'desc' };
+  }
+
+  //const orders = await prisma.order.findMany();
+  const orders = await prisma.order.findMany({
+    orderBy,
+    skip: parseInt(offset),
+    take: parseInt(limit) || undefined,
+    include: { orderItems: true }
+  });
+
+  if (orders.length > 0) {
+    res.send(orders);
+  } else {
+    res.send('No orders made.');
+  }
+});
+
+app.get('/orders/:id', async (req, res) => {
+  const { id } = req.params;
+  const order = await prisma.order.findUnique({
+    where: { id },
+    include: { orderItems: true }
+  });
+
+  if (order) {
+    res.send(order);
+  } else {
+    res.status(404).send('No order found by a given ID.');
+  }
+});
+
+app.post('/orders', async (req, res) => {
+  try {
+    assert(req.body, CreateOrder);
+    const { orderItems, ...orderProperties } = req.body;
+
+    // extract productIds & associated quatity from orderItems array
+    const productIds = orderItems.map((orderItem) => orderItem.productId);
+
+    function getQuantity(productId) {
+      const orderItem = orderItems.find((orderItem) => orderItem.productId === productId);
+      return orderItem.quantity;
+    }
+
+    // check if there is enough stock )
+    const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
+    const isSufficientStock = products.every((product) => {
+      const { id, stock } = product;
+      return stock >= getQuantity(id);
+    });
+    // cancel the order if there is any item with insufficient stock
+    if (!isSufficientStock) {
+      return res.status(500).send('Insufficient stock');
+    }
+
+    // update quantity: reduce stodck by order, use async functions in parallel
+    await Promise.all(
+      productIds.map((id) => {
+        return prisma.product.update({
+          where: { id },
+          data: { stock: { decrement: getQuantity(id) } }
+        });
+      })
+    );
+
+    // create order
+    const order = await prisma.order.create({
+      data: {
+        // user: {
+        //   connect: { id: orderProperties.userId }
+        // },
+        ...orderProperties,
+        orderItems: { create: orderItems }
+      },
+      include: { orderItems: true }
+    });
+    res.send(order);
+  } catch (e) {
+    res.status(422).send('Validation failed');
+  }
+});
+
+app.patch('/orders/:id', async (req, res) => {
+  try {
+    assert(req.body, PatchOrder);
+  } catch (e) {
+    res.status(422).send('Validation failed.');
+  }
+
+  const { id } = req.params;
+  if ((await prisma.order.count({ where: { id } })) != 1) {
+    return res.status(404).send('No order found by a given ID.');
+  }
+  const { orderItems, ...otherProperties } = req.body;
+  const order = await prisma.order.update({
+    where: { id },
+    data: {
+      ...otherProperties,
+      orderItems: { update: orderItems }
+    },
+    include: { orderItems: true }
+  });
+  res.send(order);
+});
+
+app.delete('/orders/:id', async (req, res) => {
+  const { id } = req.params;
+  if ((await prisma.order.count({ where: { id } })) != 1) {
+    return res.status(404).send('No order found by a given ID.');
+  }
+  const order = await prisma.order.delete({ where: { id } });
+  console.log('Order deleted.');
+  res.send(order);
 });
 
 app.listen(process.env.PORT || 3000, () => console.log(`Server started`));
