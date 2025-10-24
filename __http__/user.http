@@ -4,14 +4,14 @@ GET http://localhost:3000/users
 GET http://localhost:3000/users?order=newest&offset=01&limit=2
 
 ###
-GET http://localhost:3000/users/aa48504d-fa48-45fc-aacc-6fd027ce2a53
+GET http://localhost:3000/users/7816e4e3-fc08-41e2-84f1-5e7bbb204d1f
 
 ###
 POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "email": "babo8112@naver.com",
+  "email": "babo8116@naver.com",
   "firstName": "길동",
   "lastName": "홍",
   "address": "강원도 삼척시",
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:3000/users/aa48504d-fa48-45fc-aacc-6fd027ce2a53
+PATCH http://localhost:3000/users/24194b86-91a1-4603-ba03-6926937c20ab
 Content-Type: application/json
 
 {
@@ -29,9 +29,15 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/users/67dbfe9d-899f-45a4-8489-31c361656795
+DELETE http://localhost:3000/users/29b4bcb0-8027-4c3d-b481-6033dc77fc40
 
+###
+POST http://localhost:3000/users/7816e4e3-fc08-41e2-84f1-5e7bbb204d1f/save
+Content-Type: application/json
 
+{
+  "productId": "43c62d5b-6e66-4d1c-9f47-14d1a1970fd1"
+}
 
 
 
@@ -59,7 +65,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:3000/products/0c1d678a-6a42-4adf-b3e0-a43cdec8754a
+PATCH http://localhost:3000/products/c99795cc-e3d3-4fe2-b9f4-ba40d5e9a306
 Content-Type: application/json
 
 {
@@ -70,4 +76,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/products/0c1d678a-6a42-4adf-b3e0-a43cdec8754a
+DELETE http://localhost:3000/products/65dc28f6-8b55-4efa-9385-c91148a6735f
